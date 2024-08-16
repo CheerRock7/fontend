@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 export default function Page() {
   const [items, setItems] = useState([]);
+
   useEffect(() => {
     async function getUsers() {
       try {
@@ -22,8 +23,31 @@ export default function Page() {
  
   getUsers()
   const interval  = setInterval(getUsers, 1000);
-  return () => clearInterval(interval );
+  return () => clearInterval(interval);
 }, []);
+
+const handleDelete = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/users/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete user');
+    }
+
+    // Optionally update the UI by removing the deleted user from the list
+    setItems(items.filter(item => item.id !== id));
+
+    console.log(`User with id ${id} deleted successfully.`);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+  }
+};
 
   return (
     <>
@@ -52,8 +76,8 @@ export default function Page() {
               <td className='text-center'>{item.id}</td>
               <td>{item.firstname}</td>
               <td>{item.lastname}</td>
-              <td><Link href="#" className="btn btn-warning">Edit</Link></td>
-              <td><Link href="#" className="btn btn-danger">Del</Link></td>
+              <td><Link href={`/users/edit/${item.id}`} className="btn btn-warning">Edit</Link></td>
+              <td><button class="btn btn-pill btn-danger" type="button" onClick={() => handleDelete(item.id)}><i class="fa fa-trash"></i>Del</button></td>
             </tr>
           ))}
         </tbody>
