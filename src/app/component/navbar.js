@@ -30,7 +30,7 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
-    router.push('/signin');
+    router.push('/signin'); // Redirect to signin page
   };
 
   return (
